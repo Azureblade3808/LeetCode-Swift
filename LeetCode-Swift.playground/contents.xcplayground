@@ -3,5 +3,6 @@
     <pages>
         <page name='1. Two Sum'/>
         <page name='51. N Queens'/>
+        <page name='52. N Queens II'/>
     </pages>
 </playground>
