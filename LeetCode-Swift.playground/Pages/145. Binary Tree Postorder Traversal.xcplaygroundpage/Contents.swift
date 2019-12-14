@@ -12,13 +12,48 @@ public class TreeNode {
 }
 
 class Solution {
+	private enum Step {
+		case left
+		case right
+		case over
+	}
+	
 	func postorderTraversal(_ root: TreeNode?) -> [Int] {
 		var result: [Int] = []
 		
 		if let root = root {
-			result += postorderTraversal(root.left)
-			result += postorderTraversal(root.right)
-			result.append(root.val)
+			var current: (node: TreeNode, step: Step) = (root, .left)
+			var previousPath: [(node: TreeNode, step: Step)] = []
+			
+			while true {
+				if current.step == .left {
+					current.step = .right
+					
+					if let leftNode = current.node.left {
+						previousPath.append(current)
+						current = (leftNode, .left)
+						continue
+					}
+				}
+				
+				if current.step == .right {
+					current.step = .over
+					
+					if let rightNode = current.node.right {
+						previousPath.append(current)
+						current = (rightNode, .left)
+						continue
+					}
+				}
+				
+				result.append(current.node.val)
+				
+				if previousPath.isEmpty {
+					break
+				}
+				
+				current = previousPath.removeLast()
+			}
 		}
 		
 		return result;
@@ -49,5 +84,7 @@ assert(
 	
 	[3, 2, 1]
 )
+
+print("OK")
 
 //: [Next](@next)
