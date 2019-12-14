@@ -2,8 +2,8 @@
 
 class Solution {
 	func solveNQueens(_ n: Int) -> [[String]] {
-		let solutionsAsIntArrays = solveNQueensAsIntArrays(n)
-		let solutions = solutionsAsIntArrays.map { intArray in
+		let intArraySolutions: [[Int]] = solveNQueens(n)
+		let solutions = intArraySolutions.map { intArray in
 			intArray.map { index in
 				"\(String(repeating: ".", count: index))Q\(String(repeating: ".", count: n - index - 1))"
 			}
@@ -11,7 +11,7 @@ class Solution {
 		return solutions
 	}
 	
-	private func solveNQueensAsIntArrays(_ n: Int, _ columnIndexes: [Int] = []) -> [[Int]] {
+	private func solveNQueens(_ n: Int, _ columnIndexes: [Int] = []) -> [[Int]] {
 		let currentRowIndex = columnIndexes.count
 		
 		if currentRowIndex == n {
@@ -22,12 +22,14 @@ class Solution {
 		
 		LOOP_CURRENT_COLUMN_INDEX:
 		for currentColumnIndex in 0 ..< n {
-			for (rowIndex, columnIndex) in columnIndexes.enumerated() {
-				if currentColumnIndex == columnIndex {
-					continue LOOP_CURRENT_COLUMN_INDEX
-				}
+			for rowIndex in 0 ..< currentRowIndex {
+				let columnIndex = columnIndexes[rowIndex]
 				
-				if abs(currentColumnIndex - columnIndex) == currentRowIndex - rowIndex {
+				if (
+					currentColumnIndex == columnIndex
+					||
+					abs(currentColumnIndex - columnIndex) == currentRowIndex - rowIndex
+				) {
 					continue LOOP_CURRENT_COLUMN_INDEX
 				}
 			}
@@ -35,7 +37,7 @@ class Solution {
 			var columnIndexes = columnIndexes
 			columnIndexes.append(currentColumnIndex)
 			
-			solutions += solveNQueensAsIntArrays(n, columnIndexes)
+			solutions += solveNQueens(n, columnIndexes)
 		}
 		
 		return solutions
