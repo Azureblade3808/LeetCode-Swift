@@ -39,4 +39,6 @@ assert(Solution().totalNQueens(2) == 0)
 assert(Solution().totalNQueens(3) == 0)
 assert(Solution().totalNQueens(4) == 2)
 
+print("OK")
+
 //: [Next](@next)
