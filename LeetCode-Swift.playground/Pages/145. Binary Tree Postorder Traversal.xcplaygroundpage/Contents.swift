@@ -13,11 +13,17 @@ public class TreeNode {
 
 class Solution {
 	func postorderTraversal(_ root: TreeNode?) -> [Int] {
-		// FIXME: ...
-		fatalError()
+		var result: [Int] = []
+		
+		if let root = root {
+			result += postorderTraversal(root.left)
+			result += postorderTraversal(root.right)
+			result.append(root.val)
+		}
+		
+		return result;
 	}
 }
-
 
 extension TreeNode {
 	convenience init(_ val: Int, left: TreeNode? = nil, right: TreeNode? = nil) {
