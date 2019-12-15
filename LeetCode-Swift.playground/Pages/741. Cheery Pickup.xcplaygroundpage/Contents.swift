@@ -108,6 +108,7 @@ let cherryPickup = Solution().cherryPickup
 assert(cherryPickup([[0, 1, -1], [1, 0, -1], [1, 1,  1]]) == 5)
 assert(cherryPickup([[1, 1, -1], [1, -1, 1], [-1, 1, 1]]) == 0)
 assert(cherryPickup([[1, -1, -1, -1, -1], [1, 0, 1, -1, -1], [0, -1, 1, 0, 1], [1, 0, 1, 1, 0], [-1, -1, -1, 1, 1]]) == 10)
+assert(cherryPickup([[1, 1, 1, 1, 1], [1, 1, -1, 1, 1], [-1, -1, 1, 1, 1], [1, 1, 1, 1, 1], [-1, 1, 1, 1, 1]]) == 13)
 
 print("OK")
 
