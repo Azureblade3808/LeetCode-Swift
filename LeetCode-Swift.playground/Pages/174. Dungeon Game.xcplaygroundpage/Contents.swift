@@ -9,50 +9,81 @@ class Solution {
 		let width = firstRow.count
 		assert(width > 0)
 		
-		var cachedBestRoutes: [Int64 : Int] = [:]
+		let lastColumnIndex = width - 1
+		let lastRowIndex = height - 1
+
+		var damageThresholdsForLatestRow: [Int]
 		
-		func calculateBestRoute(_ x: Int, _ y: Int) -> Int {
-			let cacheKey = (Int64(x) << 32) | Int64(y)
+		// Deal with the last row.
+		do {
+			let row = dungeon[lastRowIndex]
 			
-			if let cachedBestRoute = cachedBestRoutes[cacheKey] {
-				return cachedBestRoute
+			var damageThresholds = Array(repeating: 0, count: width)
+			var damageThresholdForLatestGrid: Int
+			
+			// Deal with the last column.
+			do {
+				let value = row[lastColumnIndex]
+				
+				let damageThreshold = min(value, 0)
+				damageThresholds[lastColumnIndex] = damageThreshold
+				
+				damageThresholdForLatestGrid = damageThreshold
 			}
 			
-			let value = dungeon[y][x]
-			
-			let bestRoute: Int
-			if x < width - 1 {
-				if y < height - 1 {
-					// Two ways.
-					let bestRouteFromRight = calculateBestRoute(x + 1, y)
-					let bestRouteFromBelow = calculateBestRoute(x, y + 1)
-					let bestRouteFromNext = max(bestRouteFromRight, bestRouteFromBelow)
-					bestRoute = min(value + bestRouteFromNext, 0)
-				}
-				else {
-					// Way right only.
-					let bestRouteFromRight = calculateBestRoute(x + 1, y)
-					bestRoute = min(value + bestRouteFromRight, 0)
-				}
-			}
-			else {
-				if y < height - 1 {
-					// Way down only.
-					let bestRouteFromBelow = calculateBestRoute(x, y + 1)
-					bestRoute = min(value + bestRouteFromBelow, 0)
-				}
-				else {
-					bestRoute = min(value, 0)
-				}
+			// Deal with the rest columns.
+			for columnIndex in (0 ..< lastColumnIndex).reversed() {
+				let value = row[columnIndex]
+				
+				let damageThreshold = min(
+					value + damageThresholdForLatestGrid,
+					0
+				)
+				damageThresholds[columnIndex] = damageThreshold
+				
+				damageThresholdForLatestGrid = damageThreshold
 			}
 			
-			cachedBestRoutes[cacheKey] = bestRoute
-			
-			return bestRoute
+			damageThresholdsForLatestRow = damageThresholds
 		}
-		let bestRoute = calculateBestRoute(0, 0)
 		
-		let minimumHp = 1 - min(bestRoute, 0)
+		// Deal with the rest rows.
+		for rowIndex in (0 ..< lastRowIndex).reversed() {
+			let row = dungeon[rowIndex]
+			
+			var damageThresholds = Array(repeating: 0, count: width)
+			var damageThresholdForLatestGrid: Int
+			
+			// Deal with the last column.
+			do {
+				let value = row[lastColumnIndex]
+				
+				let damageThresholdForGridAtBelow = damageThresholdsForLatestRow[lastColumnIndex]
+				
+				let damageThreshold = min(value + damageThresholdForGridAtBelow, 0)
+				damageThresholds[lastColumnIndex] = damageThreshold
+				
+				damageThresholdForLatestGrid = damageThreshold
+			}
+			
+			// Deal with the rest columns.
+			for columnIndex in (0 ..< lastColumnIndex).reversed() {
+				let value = row[columnIndex]
+				
+				let damageThresholdForGridAtRight = damageThresholdForLatestGrid
+				let damageThresholdForGridAtBelow = damageThresholdsForLatestRow[columnIndex]
+				
+				let damageThreshold = min(value + max(damageThresholdForGridAtRight, damageThresholdForGridAtBelow), 0)
+				damageThresholds[columnIndex] = damageThreshold
+				
+				damageThresholdForLatestGrid = damageThreshold
+			}
+			
+			damageThresholdsForLatestRow = damageThresholds
+		}
+		
+		let damageThreshold = damageThresholdsForLatestRow[0]
+		let minimumHp = 1 - damageThreshold
 		
 		return minimumHp
 	}
