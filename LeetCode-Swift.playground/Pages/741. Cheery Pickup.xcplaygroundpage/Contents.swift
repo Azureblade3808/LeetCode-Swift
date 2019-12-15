@@ -24,19 +24,13 @@ class Solution {
 			let nextRowIndex = rowIndex + 1
 			
 			if nextRowIndex == size {
-				// It's the last row. We should try to close the route.
-				
 				var bestResult = previousPartialBestResult
 				
-				// Add all values referenced in current row.
-				// The line starts at `previousLeftColumnIndex` and ends before `size`.
 				for columnIndex in previousLeftColumnIndex ..< size {
 					let value = row[columnIndex]
 					if value < 0 {
-						// There is some obstacle in the way, so the route is invalid.
 						return 0
 					}
-					
 					bestResult += value
 				}
 				
@@ -52,12 +46,11 @@ class Solution {
 				
 				var partialBestResult = 0
 				
-				LOOP_LEFT_COLUMN_INDEX:
 				for leftColumnIndex in 0 ..< size {
 					do {
 						let value = row[leftColumnIndex]
 						if value < 0 {
-							continue LOOP_LEFT_COLUMN_INDEX
+							break
 						}
 						partialBestResult += value
 					}
@@ -84,43 +77,37 @@ class Solution {
 				}
 			}
 			else {
-				for leftColumnIndex in previousLeftColumnIndex ... previousRightColumnIndex {
+				var partialBestResult = previousPartialBestResult
+				
+				for leftColumnIndex in previousLeftColumnIndex ..< size {
+					do {
+						let value = row[leftColumnIndex]
+						if value < 0 {
+							break
+						}
+						partialBestResult += value
+					}
+					
 					LOOP_RIGHT_COLUMN_INDEX:
-					for rightColumnIndex in previousRightColumnIndex ..< size {
-						var partialBestResult = previousPartialBestResult
+					for rightColumnIndex in max(leftColumnIndex, previousRightColumnIndex) ..< size {
+						var partialBestResult = partialBestResult
 						
-						// Add all values referenced in current row.
 						do {
-							if leftColumnIndex == previousRightColumnIndex {
-								// The line is closed and starts at `previousLeftColumnIndex`
-								// and ends at `rightColumnIndex`
-								for columnIndex in previousLeftColumnIndex ... rightColumnIndex {
-									let value = row[columnIndex]
-									if value < 0 {
-										// There is some obstacle in the way, so the route is invalid.
-										break LOOP_RIGHT_COLUMN_INDEX
+							if leftColumnIndex >= previousRightColumnIndex {
+								if leftColumnIndex < rightColumnIndex {
+									for columnIndex in leftColumnIndex + 1 ... rightColumnIndex {
+										let value = row[columnIndex]
+										if value < 0 {
+											break LOOP_RIGHT_COLUMN_INDEX
+										}
+										partialBestResult += value
 									}
-									partialBestResult += value
 								}
 							}
 							else {
-								// The line is separated into two parts.
-								// The first part starts at 'previousLeftColumnIndex`
-								// and ends at `leftColumnIndex`.
-								// The second part starts at `previousRightColumnIndex`
-								// and ends at `rightColumnIndex`.
-								for columnIndex in previousLeftColumnIndex ... leftColumnIndex {
-									let value = row[columnIndex]
-									if value < 0 {
-										// There is some obstacle in the way, so the route is invalid.
-										break LOOP_RIGHT_COLUMN_INDEX
-									}
-									partialBestResult += value
-								}
 								for columnIndex in previousRightColumnIndex ... rightColumnIndex {
 									let value = row[columnIndex]
 									if value < 0 {
-										// There is some obstacle in the way, so the route is invalid.
 										break LOOP_RIGHT_COLUMN_INDEX
 									}
 									partialBestResult += value
@@ -149,6 +136,7 @@ assert(cherryPickup([[0, 1, -1], [1, 0, -1], [1, 1,  1]]) == 5)
 assert(cherryPickup([[1, 1, -1], [1, -1, 1], [-1, 1, 1]]) == 0)
 assert(cherryPickup([[1, -1, -1, -1, -1], [1, 0, 1, -1, -1], [0, -1, 1, 0, 1], [1, 0, 1, 1, 0], [-1, -1, -1, 1, 1]]) == 10)
 assert(cherryPickup([[1, 1, 1, 1, 1], [1, 1, -1, 1, 1], [-1, -1, 1, 1, 1], [1, 1, 1, 1, 1], [-1, 1, 1, 1, 1]]) == 13)
+assert(cherryPickup([[1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [-1, -1, 1, 1, -1], [1, 1, 1, 1, 1], [1, 1, 1, -1, 1]]) == 14)
 
 print("OK")
 
