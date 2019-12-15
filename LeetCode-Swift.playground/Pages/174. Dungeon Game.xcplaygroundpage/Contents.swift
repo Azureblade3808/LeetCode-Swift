@@ -19,7 +19,7 @@ class Solution {
 			let row = dungeon[lastRowIndex]
 			
 			var damageThresholds = Array(repeating: 0, count: width)
-			var damageThresholdForLatestGrid: Int
+			var damageThresholdForLatestCell: Int
 			
 			// Deal with the last column.
 			do {
@@ -28,7 +28,7 @@ class Solution {
 				let damageThreshold = min(value, 0)
 				damageThresholds[lastColumnIndex] = damageThreshold
 				
-				damageThresholdForLatestGrid = damageThreshold
+				damageThresholdForLatestCell = damageThreshold
 			}
 			
 			// Deal with the rest columns.
@@ -36,12 +36,12 @@ class Solution {
 				let value = row[columnIndex]
 				
 				let damageThreshold = min(
-					value + damageThresholdForLatestGrid,
+					value + damageThresholdForLatestCell,
 					0
 				)
 				damageThresholds[columnIndex] = damageThreshold
 				
-				damageThresholdForLatestGrid = damageThreshold
+				damageThresholdForLatestCell = damageThreshold
 			}
 			
 			damageThresholdsForLatestRow = damageThresholds
@@ -52,31 +52,31 @@ class Solution {
 			let row = dungeon[rowIndex]
 			
 			var damageThresholds = Array(repeating: 0, count: width)
-			var damageThresholdForLatestGrid: Int
+			var damageThresholdForLatestCell: Int
 			
 			// Deal with the last column.
 			do {
 				let value = row[lastColumnIndex]
 				
-				let damageThresholdForGridAtBelow = damageThresholdsForLatestRow[lastColumnIndex]
+				let damageThresholdForCellAtBelow = damageThresholdsForLatestRow[lastColumnIndex]
 				
-				let damageThreshold = min(value + damageThresholdForGridAtBelow, 0)
+				let damageThreshold = min(value + damageThresholdForCellAtBelow, 0)
 				damageThresholds[lastColumnIndex] = damageThreshold
 				
-				damageThresholdForLatestGrid = damageThreshold
+				damageThresholdForLatestCell = damageThreshold
 			}
 			
 			// Deal with the rest columns.
 			for columnIndex in (0 ..< lastColumnIndex).reversed() {
 				let value = row[columnIndex]
 				
-				let damageThresholdForGridAtRight = damageThresholdForLatestGrid
-				let damageThresholdForGridAtBelow = damageThresholdsForLatestRow[columnIndex]
+				let damageThresholdForCellAtRight = damageThresholdForLatestCell
+				let damageThresholdForCellAtBelow = damageThresholdsForLatestRow[columnIndex]
 				
-				let damageThreshold = min(value + max(damageThresholdForGridAtRight, damageThresholdForGridAtBelow), 0)
+				let damageThreshold = min(value + max(damageThresholdForCellAtRight, damageThresholdForCellAtBelow), 0)
 				damageThresholds[columnIndex] = damageThreshold
 				
-				damageThresholdForLatestGrid = damageThreshold
+				damageThresholdForLatestCell = damageThreshold
 			}
 			
 			damageThresholdsForLatestRow = damageThresholds
