@@ -10,39 +10,86 @@ class Solution {
 		
 		func calculateBestResult(
 			_ rowIndex: Int,
-			_ previousBestPartialResult: Int,
+			_ previousPartialBestResult: Int,
 			_ previousLeftColumnIndex: Int,
 			_ previousRightColumnIndex: Int
 		) -> Int {
-			assert(0 ... size ~= rowIndex)
+			assert(0 ..< size ~= rowIndex)
 			
 			assert(0 <= previousLeftColumnIndex)
 			assert(previousLeftColumnIndex <= previousRightColumnIndex)
 			assert(previousRightColumnIndex < size)
 			
-			guard rowIndex < size else {
-				return previousBestPartialResult
-			}
-			
 			let row = grid[rowIndex]
 			let nextRowIndex = rowIndex + 1
+			
+			if nextRowIndex == size {
+				// It's the last row. We should try to close the route.
+				
+				var bestResult = previousPartialBestResult
+				
+				// Add all values referenced in current row.
+				// The line starts at `previousLeftColumnIndex` and ends before `size`.
+				for columnIndex in previousLeftColumnIndex ..< size {
+					let value = row[columnIndex]
+					if value < 0 {
+						// There is some obstacle in the way, so the route is invalid.
+						return 0
+					}
+					
+					bestResult += value
+				}
+				
+				return bestResult
+			}
 			
 			var bestResult = 0
 			
 			for leftColumnIndex in previousLeftColumnIndex ... previousRightColumnIndex {
 				LOOP_RIGHT_COLUMN_INDEX:
 				for rightColumnIndex in previousRightColumnIndex ..< size {
-					var bestPartialResult = previousBestPartialResult
+					var partialBestResult = previousPartialBestResult
+					
 					// Add all values referenced in current row.
-					for columnIndex in leftColumnIndex ... rightColumnIndex {
-						let value = row[columnIndex]
-						if value < 0 {
-							break LOOP_RIGHT_COLUMN_INDEX
+					do {
+						if leftColumnIndex == previousRightColumnIndex {
+							// The line is closed and starts at `previousLeftColumnIndex`
+							// and ends at `rightColumnIndex`
+							for columnIndex in previousLeftColumnIndex ... rightColumnIndex {
+								let value = row[columnIndex]
+								if value < 0 {
+									// There is some obstacle in the way, so the route is invalid.
+									break LOOP_RIGHT_COLUMN_INDEX
+								}
+								partialBestResult += value
+							}
 						}
-						bestPartialResult += value
+						else {
+							// The line is separated into two parts.
+							// The first part starts at 'previousLeftColumnIndex`
+							// and ends at `leftColumnIndex`.
+							// The second part starts at `previousRightColumnIndex`
+							// and ends at `rightColumnIndex`.
+							for columnIndex in previousLeftColumnIndex ... leftColumnIndex {
+								let value = row[columnIndex]
+								if value < 0 {
+									// There is some obstacle in the way, so the route is invalid.
+									break LOOP_RIGHT_COLUMN_INDEX
+								}
+								partialBestResult += value
+							}
+							for columnIndex in previousRightColumnIndex ... rightColumnIndex {
+								let value = row[columnIndex]
+								if value < 0 {
+									// There is some obstacle in the way, so the route is invalid.
+									break LOOP_RIGHT_COLUMN_INDEX
+								}
+								partialBestResult += value
+							}
+						}
 					}
 					
-					let tempBestResult = calculateBestResult(nextRowIndex, bestPartialResult, leftColumnIndex, rightColumnIndex)
+					let tempBestResult = calculateBestResult(nextRowIndex, partialBestResult, leftColumnIndex, rightColumnIndex)
 					if tempBestResult > bestResult {
 						bestResult = tempBestResult
 					}
