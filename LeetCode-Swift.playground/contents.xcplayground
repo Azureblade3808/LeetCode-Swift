@@ -6,6 +6,7 @@
         <page name='52. N Queens II'/>
         <page name='145. Binary Tree Postorder Traversal'/>
         <page name='174. Dungeon Game'/>
+        <page name='516. Longest Palindromic Subsequence'/>
         <page name='741. Cheery Pickup'/>
     </pages>
 </playground>
