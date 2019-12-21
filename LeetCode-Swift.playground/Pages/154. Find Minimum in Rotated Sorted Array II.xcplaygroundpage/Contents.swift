@@ -5,29 +5,53 @@ class Solution {
 		assert(numbers.count != 0)
 		
 		let length = numbers.count
-		let firstNumber = numbers[0]
-		
 		if length == 1 {
-			return firstNumber
+			return numbers[0]
 		}
 		
-		var index = 0
-		var number = firstNumber
+		let lengthMinusOne = length - 1
 		
-		while true {
-			var nextIndex = index + 1
-			if nextIndex == length {
-				return firstNumber
-			}
+		func calculateResult(_ leftIndex: Int, _ rightIndex: Int, _ leftNumber: Int, _ rightNumber: Int, _ diff: Int) -> Int? {
+			assert(leftIndex < rightIndex)
+			assert(leftNumber == numbers[leftIndex])
+			assert(rightNumber == numbers[rightIndex])
+			assert(diff == rightIndex - leftIndex)
+			assert(diff >= 1)
 			
-			var nextNumber = numbers[nextIndex]
-			if nextNumber < number {
-				return nextNumber
+			if diff == 1 {
+				if leftNumber > rightNumber {
+					return rightNumber
+				}
+				else {
+					return nil
+				}
 			}
-			
-			index = nextIndex
-			number = nextNumber
+			else {
+				let centerIndex = (leftIndex + rightIndex) / 2
+				let centerNumber = numbers[centerIndex]
+				
+				if leftNumber > centerNumber {
+					return calculateResult(leftIndex, centerIndex, leftNumber, centerNumber, centerIndex - leftIndex)
+				}
+				
+				if centerNumber > rightNumber {
+					return calculateResult(centerIndex, rightIndex, centerNumber, rightNumber, rightIndex - centerIndex)
+				}
+				
+				return (
+					calculateResult(leftIndex, centerIndex, leftNumber, centerNumber, centerIndex - leftIndex)
+					??
+					calculateResult(centerIndex, rightIndex, centerNumber, rightNumber, rightIndex - centerIndex)
+				)
+			}
 		}
+		
+		let firstNumber = numbers[0]
+		let lastNumber = numbers[lengthMinusOne]
+		
+		let result = calculateResult(0, lengthMinusOne, firstNumber, lastNumber, lengthMinusOne) ?? firstNumber
+		
+		return result
 	}
 }
 
