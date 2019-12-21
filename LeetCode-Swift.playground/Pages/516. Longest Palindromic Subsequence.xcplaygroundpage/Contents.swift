@@ -11,26 +11,17 @@ class Solution {
 		
 		let characters = Array(string)
 		
-		var cachedResults: [Int : Int] = [:]
+		var cachedResults = Array(repeating: 0, count: length * length)
 		
-		func calculateResultCached(_ leftIndex: Int, _ rightIndex: Int) -> Int {
+		func calculateResult(_ leftIndex: Int, _ rightIndex: Int) -> Int {
 			assert(leftIndex <= rightIndex)
 			
-			let cacheKey = (leftIndex << 16) | rightIndex
+			let cacheKey = leftIndex * length + rightIndex
 			
-			if let result = cachedResults[cacheKey] {
+			var result: Int = cachedResults[cacheKey]
+			if result != 0 {
 				return result
 			}
-			
-			let result = calculateResult(leftIndex, rightIndex)
-			
-			cachedResults[cacheKey] = result
-			
-			return result
-		}
-			
-		func calculateResult(_ leftIndex: Int, _ rightIndex: Int) -> Int {
-			var result: Int
 			
 			switch rightIndex - leftIndex {
 				case 0:
@@ -54,13 +45,12 @@ class Solution {
 						result = 2 + calculateResult(leftIndex + 1, rightIndex - 1)
 					}
 					else {
-						result = max(
-							calculateResult(leftIndex + 1, rightIndex),
-							calculateResult(leftIndex, rightIndex - 1)
-						)
+						result = max(calculateResult(leftIndex + 1, rightIndex), calculateResult(leftIndex, rightIndex - 1))
 					}
 				}
 			}
+			
+			cachedResults[cacheKey] = result
 			
 			return result
 		}
