@@ -11,5 +11,6 @@
         <page name='516. Longest Palindromic Subsequence'/>
         <page name='741. Cheery Pickup'/>
         <page name='1022. Sum of Root To Leaf Binary Numbers'/>
+        <page name='1187. Make Array Strictly Increasing'/>
     </pages>
 </playground>
