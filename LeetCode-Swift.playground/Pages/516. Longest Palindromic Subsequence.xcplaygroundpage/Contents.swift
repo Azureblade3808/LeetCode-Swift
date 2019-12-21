@@ -13,7 +13,7 @@ class Solution {
 		
 		var cachedResults: [Int : Int] = [:]
 		
-		func calculateResult(_ leftIndex: Int, _ rightIndex: Int) -> Int {
+		func calculateResultCached(_ leftIndex: Int, _ rightIndex: Int) -> Int {
 			assert(leftIndex <= rightIndex)
 			
 			let cacheKey = (leftIndex << 16) | rightIndex
@@ -22,6 +22,14 @@ class Solution {
 				return result
 			}
 			
+			let result = calculateResult(leftIndex, rightIndex)
+			
+			cachedResults[cacheKey] = result
+			
+			return result
+		}
+			
+		func calculateResult(_ leftIndex: Int, _ rightIndex: Int) -> Int {
 			var result: Int
 			
 			switch rightIndex - leftIndex {
@@ -46,12 +54,13 @@ class Solution {
 						result = 2 + calculateResult(leftIndex + 1, rightIndex - 1)
 					}
 					else {
-						result = max(calculateResult(leftIndex + 1, rightIndex), calculateResult(leftIndex, rightIndex - 1))
+						result = max(
+							calculateResult(leftIndex + 1, rightIndex),
+							calculateResult(leftIndex, rightIndex - 1)
+						)
 					}
 				}
 			}
-			
-			cachedResults[cacheKey] = result
 			
 			return result
 		}
