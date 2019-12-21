@@ -2,8 +2,36 @@
 
 class Solution {
 	func sumRootToLeaf(_ root: TreeNode?) -> Int {
-		// FIXME: ...
-		fatalError()
+		guard let root = root else {
+			return 0
+		}
+		
+		var result = 0
+		
+		func traverse(_ node: TreeNode, _ previous: Int) {
+			let value = node.val + previous
+			let doubleValue = value * 2
+			
+			var isLeaf = true
+			
+			if let left = node.left {
+				traverse(left, doubleValue)
+				isLeaf = false
+			}
+			
+			if let right = node.right {
+				traverse(right, doubleValue)
+				isLeaf = false
+			}
+			
+			if isLeaf {
+				result += value
+			}
+		}
+		
+		traverse(root, 0)
+		
+		return result
 	}
 }
 
